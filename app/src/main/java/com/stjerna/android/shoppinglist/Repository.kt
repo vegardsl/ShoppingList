@@ -1,0 +1,40 @@
+package com.stjerna.android.shoppinglist
+
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import com.stjerna.android.shoppinglist.entity.ShoppingList
+import com.stjerna.android.shoppinglist.entity.ShoppingListGateway
+import java.util.*
+
+class Repository private constructor(private val shoppingListGateway: ShoppingListGateway) {
+
+    private val _shoppingLists: MutableLiveData<Map<UUID, ShoppingList>> = MutableLiveData()
+    val shoppingLists: LiveData<Map<UUID, ShoppingList>> = _shoppingLists
+
+    companion object {
+        private var instance: Repository? = null
+
+        fun getInstance(shoppingListGateway: ShoppingListGateway): Repository {
+            if (instance == null) instance = Repository(shoppingListGateway)
+            return instance!!
+        }
+    }
+
+    init {
+        getAllAndUpdateLiveData()
+        shoppingListGateway.observe {
+            getAllAndUpdateLiveData()
+        }
+    }
+
+    private fun getAllAndUpdateLiveData() {
+        shoppingListGateway.getAll { result ->
+            when (result) {
+                is Success -> _shoppingLists.value = result.value.map { it.id to it }.toMap().toSortedMap()
+                is Failure -> Log.e(Repository::class.java.simpleName, result.e.message)
+            }
+        }
+    }
+
+}
