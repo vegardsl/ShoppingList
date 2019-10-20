@@ -103,6 +103,7 @@ class ShoppingViewModel(private val listId: UUID, repository: Repository) : View
 
 class ShoppingViewModelFactory(private val listId: UUID) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        @Suppress("UNCHECKED_CAST")
         return ShoppingViewModel(
             listId,
             Repository.getInstance(

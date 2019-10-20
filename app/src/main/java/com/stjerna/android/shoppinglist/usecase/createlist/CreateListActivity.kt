@@ -84,11 +84,11 @@ class ShoppingListsViewModel(repository: Repository) : ViewModel() {
 
 class ShoppingListViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        @Suppress("UNCHECKED_CAST")
         return ShoppingListsViewModel(
             Repository.getInstance(
                 RealmShoppingListGateway.getInstance()
             )
         ) as T
     }
-
 }
