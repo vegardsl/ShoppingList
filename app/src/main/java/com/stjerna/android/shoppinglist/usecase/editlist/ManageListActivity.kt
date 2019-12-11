@@ -63,10 +63,9 @@ class ManageListActivity : AppCompatActivity(), CreateShoppingListPresenter {
     }
 
     private fun addNewListItem(listItemName: String) {
-        AddListItem(
+        AddListItemOnline(
             this,
-            CloudShoppingListGateway(),
-            RealmShoppingListGateway.getInstance()
+            CloudShoppingListGateway()
         ).execute(selectedListId, listItemName)
     }
 
