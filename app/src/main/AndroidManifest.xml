@@ -14,15 +14,15 @@
         <activity android:name=".usecase.login.LoginActivity">
 
         </activity>
-        <activity android:name=".LauncherActivity">
-
-        </activity>
-        <activity android:name=".usecase.signup.SignUpActivity" />
-        <activity android:name="com.stjerna.android.shoppinglist.usecase.createlist.DashboardActivity">
+        <activity android:name=".usecase.LauncherActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".usecase.signup.SignUpActivity" />
+        <activity android:name="com.stjerna.android.shoppinglist.usecase.createlist.DashboardActivity">
+
         </activity>
         <activity android:name="com.stjerna.android.shoppinglist.usecase.editlist.ManageListActivity" />
         <activity android:name="com.stjerna.android.shoppinglist.usecase.shopping.ShoppingActivity" />
