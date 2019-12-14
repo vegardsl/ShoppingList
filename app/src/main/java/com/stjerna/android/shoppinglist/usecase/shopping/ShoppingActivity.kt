@@ -34,7 +34,7 @@ class ShoppingActivity : SignedInActivity(), SetItemStatusPresenter, CompleteSho
     }
 
     lateinit var selectedListId: UUID
-    private val setItemStatus = SetItemStatusOnline(this, CloudShoppingListGateway())
+    private val setItemStatus = SetItemStatusOnline(this, CloudShoppingListGateway.getInstance())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +63,7 @@ class ShoppingActivity : SignedInActivity(), SetItemStatusPresenter, CompleteSho
         }
 
         complete_shopping_button.setOnClickListener {
-            CompleteShopping(this, CloudShoppingListGateway()).execute(
+            CompleteShopping(this, CloudShoppingListGateway.getInstance()).execute(
                 selectedListId
             )
         }
@@ -108,7 +108,7 @@ class ShoppingViewModelFactory(private val listId: UUID) : ViewModelProvider.Fac
         return ShoppingViewModel(
             listId,
             Repository.getInstance(
-                CloudShoppingListGateway(),
+                CloudShoppingListGateway.getInstance(),
                 CloudUserGateway()
             )
         ) as T

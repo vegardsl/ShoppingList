@@ -1,19 +1,62 @@
 package com.stjerna.android.shoppinglist
 
+import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.stjerna.android.shoppinglist.entity.User
 import com.stjerna.android.shoppinglist.entity.UserGateway
 import java.util.*
 
 class CloudUserGateway : UserGateway {
+    private var subscription: ListenerRegistration? = null
+
+    override fun subscribeToCurrentUser(onChanged: () -> Unit) {
+        currentUserId()?.let {
+            val docRef = db.collection("users").document(it)
+            subscription = docRef.addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    Log.w(CloudShoppingListGateway.TAG, "Listen failed.", e)
+                    return@addSnapshotListener
+                }
+
+                val source = if (snapshot != null && snapshot.metadata.hasPendingWrites())
+                    "Local"
+                else
+                    "Server"
+
+                if (snapshot != null && snapshot.exists()) {
+                    Log.d(CloudShoppingListGateway.TAG, "$source data: ${snapshot.data}")
+                } else {
+                    Log.d(CloudShoppingListGateway.TAG, "$source data: null")
+                }
+
+                onChanged.invoke()
+            }
+        }
+    }
+
+    override fun unsubscribeToCurrentUser() {
+        subscription?.remove()
+        subscription = null
+    }
+
     private val db = FirebaseFirestore.getInstance()
 
     override fun put(user: User, onCompletion: (Try<Unit>) -> Unit) {
+        val lists = mutableListOf<String>()
+        user.lists.forEach { listId -> lists.add(listId.toString()) }
+
+        val dbUser = hashMapOf(
+            "email" to user.email,
+            "nick" to user.nick,
+            "lists" to lists
+        )
+
         db.collection("users")
             .document(user.id)
-            .set(user)
+            .set(dbUser)
             .addOnSuccessListener {
                 onCompletion.invoke(Success(Unit))
             }
@@ -30,7 +73,7 @@ class CloudUserGateway : UserGateway {
                     onCompletion.invoke(
                         Success(
                             User(
-                                document["id"] as String,
+                                document.id,
                                 document["nick"] as String,
                                 document["email"] as String,
                                 mapList(document)
@@ -58,7 +101,7 @@ class CloudUserGateway : UserGateway {
     private fun tryMap(possibleLists: List<*>): MutableList<UUID> {
         val list = mutableListOf<UUID>()
         try {
-            possibleLists.forEach { list.add(it as UUID) }
+            possibleLists.forEach { list.add(UUID.fromString(it as String)) }
         } catch (e: Exception) { // TODO: Specify exception.
             e.printStackTrace()
         }

@@ -43,6 +43,9 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:19.2.0'
     implementation 'com.google.firebase:firebase-firestore:21.3.1'
 
+    def lifecycle_version = "2.1.0"
+    implementation "android.arch.lifecycle:extensions:$lifecycle_version"
+    kapt "android.arch.lifecycle:compiler:$lifecycle_version"
 }
 
 apply plugin: 'com.google.gms.google-services'

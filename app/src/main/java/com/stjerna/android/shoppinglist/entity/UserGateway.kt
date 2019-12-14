@@ -8,4 +8,8 @@ interface UserGateway {
     fun get(id: String, onCompletion: (Try<User>) -> Unit)
 
     fun currentUserId(): String?
+
+    fun subscribeToCurrentUser(onChanged: () -> Unit)
+
+    fun unsubscribeToCurrentUser()
 }

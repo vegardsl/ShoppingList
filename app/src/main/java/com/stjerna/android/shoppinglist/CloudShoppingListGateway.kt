@@ -2,6 +2,7 @@ package com.stjerna.android.shoppinglist
 
 import android.util.Log
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ListenerRegistration
 import com.stjerna.android.shoppinglist.entity.Item
 import com.stjerna.android.shoppinglist.entity.ShoppingList
 import com.stjerna.android.shoppinglist.entity.ShoppingListGateway
@@ -9,20 +10,29 @@ import java.io.IOException
 import java.util.*
 import kotlin.collections.HashMap
 
-class CloudShoppingListGateway : ShoppingListGateway {
+class CloudShoppingListGateway private constructor(): ShoppingListGateway {
+    private val listeners = mutableListOf<ListenerRegistration>()
+
+    override fun unsubscribeAll() {
+        listeners.forEach {
+            it.remove()
+        }
+        listeners.clear()
+    }
+
     private val db = FirebaseFirestore.getInstance()
 
     override fun delete(id: UUID, onCompletion: (Try<Unit>) -> Unit) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun observe(listsToObserve: List<UUID>, onChanged: () -> Unit) {
+    override fun subscribe(listsToObserve: List<UUID>, onChanged: () -> Unit) {
         listsToObserve.forEach { observeList(it, onChanged) }
     }
 
     private fun observeList(id: UUID, onChanged: () -> Unit) {
         val docRef = db.collection("lists").document(id.toString())
-        docRef.addSnapshotListener { snapshot, e ->
+        val listenerReg = docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
                 Log.w(TAG, "Listen failed.", e)
                 return@addSnapshotListener
@@ -42,6 +52,7 @@ class CloudShoppingListGateway : ShoppingListGateway {
             onChanged.invoke()
         }
 
+        listeners.add(listenerReg)
 
     }
 
@@ -151,6 +162,12 @@ class CloudShoppingListGateway : ShoppingListGateway {
 
     companion object {
         val TAG = CloudShoppingListGateway::class.java.simpleName
+
+        private var instance: ShoppingListGateway = CloudShoppingListGateway()
+
+        fun getInstance(): ShoppingListGateway {
+            return instance
+        }
     }
 
 }

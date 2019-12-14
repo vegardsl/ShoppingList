@@ -8,13 +8,15 @@ import com.stjerna.android.shoppinglist.Repository
 
 abstract class SignedInActivity : AppCompatActivity() {
 
-    lateinit var repository: Repository
+    private lateinit var repository: Repository
+    private val cloudShoppingListGateway = CloudShoppingListGateway.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         repository = Repository.getInstance(
-            CloudShoppingListGateway(),
+            cloudShoppingListGateway,
             CloudUserGateway()
         )
     }
+
 }

@@ -56,7 +56,7 @@ class DashboardActivity : SignedInActivity(), CreateShoppingListPresenter {
     private fun addNewShoppingList(shoppingListName: String) {
         CreateShoppingListOnline(
             presenter = this,
-            remote = CloudShoppingListGateway(),
+            remote = CloudShoppingListGateway.getInstance(),
             userGW = CloudUserGateway()
         ).execute(shoppingListName)
     }
@@ -87,7 +87,7 @@ class ShoppingListViewModelFactory : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         return ShoppingListsViewModel(
             Repository.getInstance(
-                CloudShoppingListGateway(),
+                CloudShoppingListGateway.getInstance(),
                 CloudUserGateway()
 
             )

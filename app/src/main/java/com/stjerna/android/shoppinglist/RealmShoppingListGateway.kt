@@ -12,6 +12,10 @@ import java.lang.Error
 import java.util.*
 
 class RealmShoppingListGateway private constructor(): ShoppingListGateway {
+    override fun unsubscribeAll() {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun delete(id: UUID, onCompletion: (Try<Unit>) -> Unit) {
         val result = realm.where(RealmShoppingList::class.java).equalTo("id", id.toString()).findAll()
         realm.executeTransaction {
@@ -95,7 +99,7 @@ class RealmShoppingListGateway private constructor(): ShoppingListGateway {
         onCompletion.invoke(Success(shoppingLists))
     }
 
-    override fun observe(listsToObserve: List<UUID>, onChanged: () -> Unit) {
+    override fun subscribe(listsToObserve: List<UUID>, onChanged: () -> Unit) {
         realm.addChangeListener {
             onChanged.invoke()
         }

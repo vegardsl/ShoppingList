@@ -66,7 +66,7 @@ class ManageListActivity : SignedInActivity(), CreateShoppingListPresenter {
     private fun addNewListItem(listItemName: String) {
         AddListItemOnline(
             this,
-            CloudShoppingListGateway()
+            CloudShoppingListGateway.getInstance()
         ).execute(selectedListId, listItemName)
     }
 
@@ -100,7 +100,7 @@ class ManageListViewModelFactory(private val listId: UUID) : ViewModelProvider.F
         return ManageListViewModel(
             listId,
             Repository.getInstance(
-                CloudShoppingListGateway(),
+                CloudShoppingListGateway.getInstance(),
                 CloudUserGateway()
             )
         ) as T

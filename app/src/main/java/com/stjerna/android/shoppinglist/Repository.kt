@@ -31,7 +31,7 @@ class Repository private constructor(
                 when(result) {
                     is Success -> {
                         getAllAndUpdateLiveData(result.value.lists)
-                        shoppingListGateway.observe(result.value.lists) {
+                        shoppingListGateway.subscribe(result.value.lists) {
                             getAllAndUpdateLiveData(result.value.lists)
                         }
                     }
@@ -39,6 +39,24 @@ class Repository private constructor(
                 }
 
             }
+        }
+
+        userGateway.subscribeToCurrentUser {
+            userGateway.currentUserId()?.let { id ->
+                userGateway.get(id) {result ->
+                    when(result) {
+                        is Success -> {
+                            getAllAndUpdateLiveData(result.value.lists)
+                            shoppingListGateway.subscribe(result.value.lists) {
+                                getAllAndUpdateLiveData(result.value.lists)
+                            }
+                        }
+                        is Error -> throw IllegalStateException("No user") // TODO: Handle error state.
+                    }
+
+                }
+            }
+
         }
     }
 
