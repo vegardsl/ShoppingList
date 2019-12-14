@@ -12,10 +12,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.stjerna.android.shoppinglist.*
 import com.stjerna.android.shoppinglist.entity.ShoppingList
+import com.stjerna.android.shoppinglist.usecase.SignedInActivity
 import kotlinx.android.synthetic.main.activity_shopping.*
 import java.util.*
 
-class ShoppingActivity : AppCompatActivity(), SetItemStatusPresenter, CompleteShoppingPresenter {
+class ShoppingActivity : SignedInActivity(), SetItemStatusPresenter, CompleteShoppingPresenter {
     override fun onFinishShoppingResult(wasDeleted: Boolean) {
         if (wasDeleted) tryFinish()
     }
@@ -33,7 +34,7 @@ class ShoppingActivity : AppCompatActivity(), SetItemStatusPresenter, CompleteSh
     }
 
     lateinit var selectedListId: UUID
-    private val setItemStatus = SetItemStatus(this, RealmShoppingListGateway.getInstance(), CloudShoppingListGateway())
+    private val setItemStatus = SetItemStatusOnline(this, CloudShoppingListGateway())
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +63,7 @@ class ShoppingActivity : AppCompatActivity(), SetItemStatusPresenter, CompleteSh
         }
 
         complete_shopping_button.setOnClickListener {
-            CompleteShopping(this, RealmShoppingListGateway.getInstance(), CloudShoppingListGateway()).execute(
+            CompleteShopping(this, CloudShoppingListGateway()).execute(
                 selectedListId
             )
         }
@@ -107,7 +108,8 @@ class ShoppingViewModelFactory(private val listId: UUID) : ViewModelProvider.Fac
         return ShoppingViewModel(
             listId,
             Repository.getInstance(
-                RealmShoppingListGateway.getInstance()
+                CloudShoppingListGateway(),
+                CloudUserGateway()
             )
         ) as T
     }

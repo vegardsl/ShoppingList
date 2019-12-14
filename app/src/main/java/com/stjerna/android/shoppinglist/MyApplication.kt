@@ -12,7 +12,6 @@ class MyApplication : Application() {
         super.onCreate()
 
         Realm.init(this)
-        repository = Repository.getInstance(RealmShoppingListGateway.getInstance())
         Log.d(MyApplication::class.java.simpleName, "MyApplication, onCreate()")
     }
 }

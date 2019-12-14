@@ -5,7 +5,7 @@ import kotlin.collections.HashMap
 
 class ShoppingList(val id: UUID, val name: String) {
 
-    val items = HashMap<UUID, Item>()
+    var items = HashMap<UUID, Item>()
 
     fun addItem(name: String) {
         val id = UUID.randomUUID()

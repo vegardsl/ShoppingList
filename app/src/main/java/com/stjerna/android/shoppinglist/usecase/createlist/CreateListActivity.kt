@@ -15,9 +15,9 @@ import kotlinx.android.synthetic.main.activity_dashboard.*
 import android.text.InputType
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
+import com.stjerna.android.shoppinglist.usecase.SignedInActivity
 
-
-class DashboardActivity : AppCompatActivity(), CreateShoppingListPresenter {
+class DashboardActivity : SignedInActivity(), CreateShoppingListPresenter {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,10 +54,10 @@ class DashboardActivity : AppCompatActivity(), CreateShoppingListPresenter {
     }
 
     private fun addNewShoppingList(shoppingListName: String) {
-        CreateShoppingList(
+        CreateShoppingListOnline(
             presenter = this,
             remote = CloudShoppingListGateway(),
-            local = RealmShoppingListGateway.getInstance()
+            userGW = CloudUserGateway()
         ).execute(shoppingListName)
     }
 
@@ -87,7 +87,9 @@ class ShoppingListViewModelFactory : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         return ShoppingListsViewModel(
             Repository.getInstance(
-                RealmShoppingListGateway.getInstance()
+                CloudShoppingListGateway(),
+                CloudUserGateway()
+
             )
         ) as T
     }

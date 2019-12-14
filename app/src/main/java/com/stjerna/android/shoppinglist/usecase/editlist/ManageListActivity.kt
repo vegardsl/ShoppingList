@@ -13,11 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.stjerna.android.shoppinglist.*
 import com.stjerna.android.shoppinglist.R
 import com.stjerna.android.shoppinglist.entity.ShoppingList
+import com.stjerna.android.shoppinglist.usecase.SignedInActivity
 import com.stjerna.android.shoppinglist.usecase.shopping.ShoppingActivity
 import kotlinx.android.synthetic.main.activity_manage_list.*
 import java.util.*
 
-class ManageListActivity : AppCompatActivity(), CreateShoppingListPresenter {
+class ManageListActivity : SignedInActivity(), CreateShoppingListPresenter {
     override fun onResult(interactionResult: InteractionResult) {
         Toast.makeText(this, interactionResult.toString(), Toast.LENGTH_LONG).show()
     }
@@ -95,10 +96,12 @@ class ManageListViewModel(private val listId: UUID, repository: Repository) : Vi
 
 class ManageListViewModelFactory(private val listId: UUID) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+        @Suppress("UNCHECKED_CAST") // TODO: Read about this warning: "as T"
         return ManageListViewModel(
             listId,
             Repository.getInstance(
-                RealmShoppingListGateway.getInstance()
+                CloudShoppingListGateway(),
+                CloudUserGateway()
             )
         ) as T
     }

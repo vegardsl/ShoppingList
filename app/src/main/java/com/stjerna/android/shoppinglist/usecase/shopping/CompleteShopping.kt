@@ -6,12 +6,11 @@ import com.stjerna.android.shoppinglist.entity.ShoppingListGateway
 import java.util.*
 
 class CompleteShopping(
-    val presenter: CompleteShoppingPresenter,
-    val instance: ShoppingListGateway,
-    cloudShoppingListGateway: CloudShoppingListGateway
+    private val presenter: CompleteShoppingPresenter,
+    private val listGateway: ShoppingListGateway
 ) {
     fun execute(listId: UUID) {
-        instance.get(listId) {
+        listGateway.get(listId) {
             when (it) {
                 is Failure -> presenter.failedToCompleteShopping(Failure(it.e))
                 is Success -> checkListAndDeleteIfComplete(it.value)
@@ -41,7 +40,7 @@ class CompleteShopping(
     }
 
     private fun deleteList(value: ShoppingList) {
-        instance.delete(value.id) {
+        listGateway.delete(value.id) {
             when (it) {
                 is Failure -> presenter.failedToCompleteShopping(Failure(it.e))
                 is Success -> presenter.onFinishShoppingResult(wasDeleted = true)

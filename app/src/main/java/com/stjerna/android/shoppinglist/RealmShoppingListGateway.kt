@@ -68,7 +68,7 @@ class RealmShoppingListGateway private constructor(): ShoppingListGateway {
         } ?: onCompletion.invoke(Failure(Error()))
     }
 
-    override fun getAll(onCompletion: (Try<List<ShoppingList>>) -> Unit) {
+    override fun getAll(lists: List<UUID>, onCompletion: (Try<List<ShoppingList>>) -> Unit) {
         val shoppingLists = arrayListOf<ShoppingList>()
         val results: RealmResults<RealmShoppingList> = realm.where(RealmShoppingList::class.java).findAll()
         results.forEach { realmShoppingList ->
@@ -95,7 +95,7 @@ class RealmShoppingListGateway private constructor(): ShoppingListGateway {
         onCompletion.invoke(Success(shoppingLists))
     }
 
-    override fun observe(onChanged: () -> Unit) {
+    override fun observe(listsToObserve: List<UUID>, onChanged: () -> Unit) {
         realm.addChangeListener {
             onChanged.invoke()
         }

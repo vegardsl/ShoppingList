@@ -6,7 +6,11 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
+import com.stjerna.android.shoppinglist.CloudUserGateway
+import com.stjerna.android.shoppinglist.Failure
 import com.stjerna.android.shoppinglist.R
+import com.stjerna.android.shoppinglist.Success
+import com.stjerna.android.shoppinglist.entity.User
 import kotlinx.android.synthetic.main.activity_sign_up.*
 
 class SignUpActivity : AppCompatActivity() {
@@ -26,7 +30,7 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     fun onClick(view: View) {
-        when(view.id) {
+        when (view.id) {
             R.id.sign_up_button -> signUp()
             else -> error("No action.")
         }
@@ -40,14 +44,34 @@ class SignUpActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d(TAG, "createUserWithEmail:success")
-                    val user = auth.currentUser
-                    Toast.makeText(baseContext, "Authentication success.",
-                        Toast.LENGTH_SHORT).show()
+                    auth.currentUser?.let { firebaseUser ->
+                        val user = User(
+                            firebaseUser.uid,
+                            "Nick Name",
+                            firebaseUser.email ?: error("Must have email."),
+                            mutableListOf()
+                        )
+
+                        CloudUserGateway().put(user) {
+                            when (it) {
+                                is Success -> Toast.makeText(
+                                    baseContext, "Authentication success.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                is Failure -> Toast.makeText(
+                                    baseContext, "Authentication failed.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+
                 } else {
-                    // If sign in fails, display a message to the user.
                     Log.w(TAG, "createUserWithEmail:failure", task.exception)
-                    Toast.makeText(baseContext, "Authentication failed.",
-                        Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        baseContext, "Authentication failed.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
 
                 // ...
