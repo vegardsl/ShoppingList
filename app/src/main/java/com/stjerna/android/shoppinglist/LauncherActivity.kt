@@ -26,7 +26,8 @@ class LauncherActivity : AppCompatActivity() {
         if (currentUser == null) {
             startActivity(Intent(this, SignUpActivity::class.java))
         } else {
-            Toast.makeText(this, "Welcome back, ${currentUser.displayName}", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Welcome back, ${currentUser.displayName}", Toast.LENGTH_LONG)
+                .show()
         }
     }
 }

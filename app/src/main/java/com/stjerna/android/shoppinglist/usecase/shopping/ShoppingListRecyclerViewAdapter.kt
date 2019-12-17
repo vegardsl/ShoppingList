@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.stjerna.android.shoppinglist.entity.Item
 import com.stjerna.android.shoppinglist.R
+import com.stjerna.android.shoppinglist.entity.Item
 import java.util.*
 
 class ShoppingRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -51,8 +51,9 @@ class ShoppingRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder
         val shoppingListNameTextView: TextView = view.findViewById(R.id.shopping_list_name_textView)
         val checkBox: CheckBox = view.findViewById(R.id.item_found_checkBox)
         var itemId: UUID? = null
+
         init {
-            checkBox.setOnClickListener{
+            checkBox.setOnClickListener {
                 itemId?.let { onItemSelectedListener?.invoke(it, checkBox.isChecked) }
             }
         }

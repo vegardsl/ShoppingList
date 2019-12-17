@@ -11,7 +11,7 @@ class AddListItemOnline(
     private val remote: ShoppingListGateway
 ) {
     fun execute(id: UUID, itemName: String) {
-        remote.get(id) {result ->
+        remote.get(id) { result ->
             when (result) {
                 is Success -> addListItem(result.value, itemName)
                 is Failure -> presenter.onResult(InteractionResult.ERROR)

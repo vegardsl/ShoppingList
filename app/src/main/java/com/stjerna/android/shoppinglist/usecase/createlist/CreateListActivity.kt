@@ -2,26 +2,27 @@ package com.stjerna.android.shoppinglist.usecase.createlist
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputType
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.stjerna.android.shoppinglist.*
+import com.stjerna.android.shoppinglist.usecase.SignedInActivity
 import com.stjerna.android.shoppinglist.usecase.editlist.ManageListActivity
 import kotlinx.android.synthetic.main.activity_dashboard.*
-import android.text.InputType
-import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
-import com.stjerna.android.shoppinglist.usecase.SignedInActivity
 
 class DashboardActivity : SignedInActivity(), CreateShoppingListPresenter {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_dashboard)
+
+        title = getString(R.string.dashboard_activity_title)
 
         val shoppingListsRecyclerViewAdapter =
             ShoppingListsRecyclerViewAdapter()
@@ -75,7 +76,6 @@ class DashboardActivity : SignedInActivity(), CreateShoppingListPresenter {
         builder.show()
     }
 }
-
 
 
 class ShoppingListsViewModel(repository: Repository) : ViewModel() {

@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import com.stjerna.android.shoppinglist.entity.ShoppingList
 import com.stjerna.android.shoppinglist.entity.ShoppingListGateway
 import com.stjerna.android.shoppinglist.entity.UserGateway
-import java.lang.Error
 import java.util.*
 
 class Repository private constructor(
@@ -19,7 +18,10 @@ class Repository private constructor(
     companion object {
         private var instance: Repository? = null
 
-        fun getInstance(shoppingListGateway: ShoppingListGateway, userGateway: UserGateway): Repository {
+        fun getInstance(
+            shoppingListGateway: ShoppingListGateway,
+            userGateway: UserGateway
+        ): Repository {
             if (instance == null) instance = Repository(shoppingListGateway, userGateway)
             return instance!!
         }
@@ -27,8 +29,8 @@ class Repository private constructor(
 
     init {
         userGateway.currentUserId()?.let { id ->
-            userGateway.get(id) {result ->
-                when(result) {
+            userGateway.get(id) { result ->
+                when (result) {
                     is Success -> {
                         getAllAndUpdateLiveData(result.value.lists)
                         shoppingListGateway.subscribe(result.value.lists) {
@@ -43,8 +45,8 @@ class Repository private constructor(
 
         userGateway.subscribeToCurrentUser {
             userGateway.currentUserId()?.let { id ->
-                userGateway.get(id) {result ->
-                    when(result) {
+                userGateway.get(id) { result ->
+                    when (result) {
                         is Success -> {
                             getAllAndUpdateLiveData(result.value.lists)
                             shoppingListGateway.subscribe(result.value.lists) {
@@ -63,7 +65,8 @@ class Repository private constructor(
     private fun getAllAndUpdateLiveData(lists: MutableList<UUID>) {
         shoppingListGateway.getAll(lists) { result ->
             when (result) {
-                is Success -> _shoppingLists.value = result.value.map { it.id to it }.toMap().toSortedMap()
+                is Success -> _shoppingLists.value =
+                    result.value.map { it.id to it }.toMap().toSortedMap()
                 is Failure -> Log.e(Repository::class.java.simpleName, result.e.message)
             }
         }

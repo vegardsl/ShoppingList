@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.stjerna.android.shoppinglist.entity.Item
 import com.stjerna.android.shoppinglist.R
+import com.stjerna.android.shoppinglist.entity.Item
 import java.util.*
 
 class ManageListRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

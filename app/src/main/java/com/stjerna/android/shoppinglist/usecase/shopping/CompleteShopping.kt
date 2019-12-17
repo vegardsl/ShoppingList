@@ -1,6 +1,7 @@
 package com.stjerna.android.shoppinglist.usecase.shopping
 
-import com.stjerna.android.shoppinglist.*
+import com.stjerna.android.shoppinglist.Failure
+import com.stjerna.android.shoppinglist.Success
 import com.stjerna.android.shoppinglist.entity.ShoppingList
 import com.stjerna.android.shoppinglist.entity.ShoppingListGateway
 import java.util.*
@@ -34,7 +35,9 @@ class CompleteShopping(
         presenter.aboutToCloseIncompleteList {
             when (it) {
                 CompleteShoppingPresenter.Options.DELETE -> deleteList(value)
-                CompleteShoppingPresenter.Options.CANCEL -> presenter.onFinishShoppingResult(wasDeleted = false)
+                CompleteShoppingPresenter.Options.CANCEL -> presenter.onFinishShoppingResult(
+                    wasDeleted = false
+                )
             }
         }
     }

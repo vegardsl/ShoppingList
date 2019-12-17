@@ -8,9 +8,8 @@ import com.stjerna.android.shoppinglist.entity.ShoppingList
 import com.stjerna.android.shoppinglist.entity.ShoppingListGateway
 import java.io.IOException
 import java.util.*
-import kotlin.collections.HashMap
 
-class CloudShoppingListGateway private constructor(): ShoppingListGateway {
+class CloudShoppingListGateway private constructor() : ShoppingListGateway {
     private val listeners = mutableListOf<ListenerRegistration>()
 
     override fun unsubscribeAll() {
@@ -23,7 +22,12 @@ class CloudShoppingListGateway private constructor(): ShoppingListGateway {
     private val db = FirebaseFirestore.getInstance()
 
     override fun delete(id: UUID, onCompletion: (Try<Unit>) -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        db.collection("lists").document(id.toString()).delete()
+            .addOnSuccessListener {
+                onCompletion.invoke(Success(Unit))
+            }.addOnFailureListener {
+                onCompletion.invoke(Failure(it))
+            }
     }
 
     override fun subscribe(listsToObserve: List<UUID>, onChanged: () -> Unit) {

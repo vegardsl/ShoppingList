@@ -6,12 +6,13 @@ import android.text.InputType
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.Transformations
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.stjerna.android.shoppinglist.*
-import com.stjerna.android.shoppinglist.R
 import com.stjerna.android.shoppinglist.entity.ShoppingList
 import com.stjerna.android.shoppinglist.usecase.SignedInActivity
 import com.stjerna.android.shoppinglist.usecase.shopping.ShoppingActivity
@@ -46,6 +47,7 @@ class ManageListActivity : SignedInActivity(), CreateShoppingListPresenter {
                     return@Observer
                 }
                 adapter.setListItems(shoppingList.items.values)
+                title = shoppingList.name
             })
         } else {
             finish()
@@ -72,7 +74,7 @@ class ManageListActivity : SignedInActivity(), CreateShoppingListPresenter {
 
     private fun createDialog() {
         val builder = AlertDialog.Builder(this)
-        builder.setTitle("Add an item to the list")
+        builder.setTitle(getString(R.string.manage_list_add_item_prompt_title))
 
         val input = EditText(this)
         input.inputType = InputType.TYPE_CLASS_TEXT or InputType.TYPE_TEXT_VARIATION_NORMAL
@@ -87,7 +89,8 @@ class ManageListActivity : SignedInActivity(), CreateShoppingListPresenter {
 }
 
 class ManageListViewModel(private val listId: UUID, repository: Repository) : ViewModel() {
-    val shoppingList: LiveData<ShoppingList?> = Transformations.map(repository.shoppingLists, ::mapToShoppingList)
+    val shoppingList: LiveData<ShoppingList?> =
+        Transformations.map(repository.shoppingLists, ::mapToShoppingList)
 
     private fun mapToShoppingList(shoppingLists: Map<UUID, ShoppingList>): ShoppingList? {
         return shoppingLists[listId]

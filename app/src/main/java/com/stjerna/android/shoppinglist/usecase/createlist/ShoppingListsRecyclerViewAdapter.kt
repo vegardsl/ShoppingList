@@ -9,14 +9,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.stjerna.android.shoppinglist.R
 import com.stjerna.android.shoppinglist.entity.ShoppingList
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ShoppingListsRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var items: List<ListItem> = listOf()
     private var onItemSelectedListener: ((id: UUID) -> Unit)? = null
 
-    fun onListItemSelected(onSelected : (id: UUID) -> Unit) {
+    fun onListItemSelected(onSelected: (id: UUID) -> Unit) {
         onItemSelectedListener = onSelected
     }
 
@@ -31,7 +30,8 @@ class ShoppingListsRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val layoutInflater: LayoutInflater = parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val layoutInflater: LayoutInflater =
+            parent.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
 
         val view = layoutInflater.inflate(R.layout.shopping_list_list_item, parent, false)
         return ShoppingListViewHolder(view)
@@ -47,7 +47,7 @@ class ShoppingListsRecyclerViewAdapter : RecyclerView.Adapter<RecyclerView.ViewH
         }
     }
 
-    class ShoppingListViewHolder(view: View): RecyclerView.ViewHolder(view) {
+    class ShoppingListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val shoppingListNameTextView: TextView = view.findViewById(R.id.shopping_list_name_textView)
     }
 }

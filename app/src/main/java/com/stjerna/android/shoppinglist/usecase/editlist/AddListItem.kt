@@ -12,7 +12,7 @@ class AddListItem(
     private val local: ShoppingListGateway
 ) {
     fun execute(id: UUID, itemName: String) {
-        local.get(id) {result ->
+        local.get(id) { result ->
             when (result) {
                 is Success -> addListItem(result.value, itemName)
                 is Failure -> presenter.onResult(InteractionResult.ERROR)

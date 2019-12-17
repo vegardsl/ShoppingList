@@ -3,7 +3,6 @@ package com.stjerna.android.shoppinglist.usecase.shopping
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.Transformations
@@ -22,7 +21,11 @@ class ShoppingActivity : SignedInActivity(), SetItemStatusPresenter, CompleteSho
     }
 
     override fun failedToCompleteShopping(failure: Failure<Throwable>) {
-        Toast.makeText(this, "Failed to complete shopping: ${failure.e.message}.", Toast.LENGTH_LONG).show()
+        Toast.makeText(
+            this,
+            "Failed to complete shopping: ${failure.e.message}.",
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     override fun aboutToCloseIncompleteList(continuation: (CompleteShoppingPresenter.Options) -> Unit) {
@@ -57,6 +60,7 @@ class ShoppingActivity : SignedInActivity(), SetItemStatusPresenter, CompleteSho
                     return@Observer
                 }
                 adapter.setListItems(shoppingList.items.values)
+                title = shoppingList.name
             })
         } else {
             finish()
@@ -95,7 +99,8 @@ class ShoppingActivity : SignedInActivity(), SetItemStatusPresenter, CompleteSho
 }
 
 class ShoppingViewModel(private val listId: UUID, repository: Repository) : ViewModel() {
-    val shoppingList: LiveData<ShoppingList?> = Transformations.map(repository.shoppingLists, ::mapToShoppingList)
+    val shoppingList: LiveData<ShoppingList?> =
+        Transformations.map(repository.shoppingLists, ::mapToShoppingList)
 
     private fun mapToShoppingList(shoppingLists: Map<UUID, ShoppingList>): ShoppingList? {
         return shoppingLists[listId]

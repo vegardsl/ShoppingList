@@ -8,16 +8,16 @@ import io.realm.RealmList
 import io.realm.RealmObject
 import io.realm.RealmResults
 import io.realm.annotations.PrimaryKey
-import java.lang.Error
 import java.util.*
 
-class RealmShoppingListGateway private constructor(): ShoppingListGateway {
+class RealmShoppingListGateway private constructor() : ShoppingListGateway {
     override fun unsubscribeAll() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun delete(id: UUID, onCompletion: (Try<Unit>) -> Unit) {
-        val result = realm.where(RealmShoppingList::class.java).equalTo("id", id.toString()).findAll()
+        val result =
+            realm.where(RealmShoppingList::class.java).equalTo("id", id.toString()).findAll()
         realm.executeTransaction {
             if (result.deleteAllFromRealm()) onCompletion.invoke(Success(Unit))
             else onCompletion.invoke(Failure(Exception("Failed to delete object.")))
@@ -36,7 +36,7 @@ class RealmShoppingListGateway private constructor(): ShoppingListGateway {
     private val realm: Realm = Realm.getDefaultInstance()
 
     override fun put(shoppingList: ShoppingList, onCompletion: (Try<Unit>) -> Unit) {
-        realm.executeTransactionAsync({changingRealm ->
+        realm.executeTransactionAsync({ changingRealm ->
             val realmShoppingList = RealmShoppingList()
             realmShoppingList.id = shoppingList.id.toString()
             realmShoppingList.name = shoppingList.name
@@ -48,19 +48,22 @@ class RealmShoppingListGateway private constructor(): ShoppingListGateway {
                 realmShoppingList.items.add(realmListItem)
             }
             changingRealm.insertOrUpdate(realmShoppingList)
-        }, { // On success.
+        }, {
+            // On success.
             onCompletion.invoke(Success(Unit))
-        }, { throwable -> // On failure.
+        }, { throwable ->
+            // On failure.
             onCompletion.invoke(Failure(throwable))
         })
     }
 
     override fun get(id: UUID, onCompletion: (Try<ShoppingList>) -> Unit) {
-        val results: RealmResults<RealmShoppingList> = realm.where(RealmShoppingList::class.java).equalTo("id", id.toString()).findAll()
+        val results: RealmResults<RealmShoppingList> =
+            realm.where(RealmShoppingList::class.java).equalTo("id", id.toString()).findAll()
         results.first()?.let {
             val name: String = it.name!!
             val shoppingList = ShoppingList(UUID.fromString(it.id), name)
-            it.items.forEach {realmListItem ->
+            it.items.forEach { realmListItem ->
                 val item = Item(
                     UUID.fromString(realmListItem.uuid),
                     realmListItem.name!!
@@ -74,7 +77,8 @@ class RealmShoppingListGateway private constructor(): ShoppingListGateway {
 
     override fun getAll(lists: List<UUID>, onCompletion: (Try<List<ShoppingList>>) -> Unit) {
         val shoppingLists = arrayListOf<ShoppingList>()
-        val results: RealmResults<RealmShoppingList> = realm.where(RealmShoppingList::class.java).findAll()
+        val results: RealmResults<RealmShoppingList> =
+            realm.where(RealmShoppingList::class.java).findAll()
         results.forEach { realmShoppingList ->
             val shoppingList = realmShoppingList.name?.let {
                 ShoppingList(
